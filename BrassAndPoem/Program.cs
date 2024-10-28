@@ -196,10 +196,26 @@ void UpdateProduct(List<Product> products, List<ProductType> productTypes)
 
     Console.WriteLine("Please enter a new price or press Enter to keep the current price");
     string priceInput = Console.ReadLine();
-    if (decimal.TryParse(priceInput, out decimal price) && price >= 0)
+    if (!string.IsNullOrWhiteSpace(priceInput))
     {
-        selectedProduct.Price = price;
+        while (!decimal.TryParse(priceInput, out decimal price) && price <= 0)
+        {
+            Console.WriteLine("Please enter a valid number or press Enter to keep the current price");
+            priceInput = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(priceInput))
+            {
+                break;
+            }
+        }
+
+        if (decimal.TryParse(priceInput, out decimal validPrice) && validPrice >= 0)
+        {
+            selectedProduct.Price = validPrice;
+        }
+
     }
+    
 
     Console.WriteLine("Choose the product type or press Enter to keep the current type:");
     for (int i = 0; i < productTypes.Count; i++)
@@ -208,11 +224,25 @@ void UpdateProduct(List<Product> products, List<ProductType> productTypes)
     }
 
     string productTypeIdInput = Console.ReadLine();
-    if (int.TryParse(productTypeIdInput, out int productTypeId) && productTypeId >= 1 && productTypeId <= productTypes.Count)
-    {
-        selectedProduct.ProductTypeId = productTypeId;
-    }
 
+    if (!string.IsNullOrWhiteSpace(productTypeIdInput))
+    {
+        while (!int.TryParse(productTypeIdInput, out int productTypeId) || productTypeId < 1 || productTypeId > productTypes.Count)
+        {
+            Console.WriteLine("Invalid input. Please enter a valid product type number or press Enter to skip");
+            productTypeIdInput = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(productTypeIdInput))
+            {
+                break;
+            }
+        }
+
+        if (int.TryParse(productTypeIdInput, out int validProductTypeId) && validProductTypeId >= 1 && validProductTypeId <= productTypes.Count)
+        {
+            selectedProduct.ProductTypeId = validProductTypeId;
+        }
+    }
     Console.WriteLine("Product details updated successfully.");
 }
 
